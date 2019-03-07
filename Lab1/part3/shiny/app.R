@@ -123,7 +123,7 @@ server <- function(input, output) {
       
       pal <- colorNumeric("Greens", domain=level_by_state_sb$ENTRIES)
       popup_sb <- paste0("<strong>", level_by_state_sb$NAME, 
-                         "</strong><br />Tweets: ", level_by_state_sb$ENTRIES)
+                         "</strong><br />IRL Activity Level: ", level_by_state_sb$ENTRIES)
       states_merged_sb <- level_by_state_sb
       map_legend_title <- "Level"
       
@@ -200,7 +200,7 @@ server <- function(input, output) {
       
       pal <- colorNumeric("Reds", domain=level_by_state_sb$ENTRIES)
       popup_sb <- paste0("<strong>", level_by_state_sb$NAME, 
-                         "</strong><br />Tweets: ", level_by_state_sb$ENTRIES)
+                         "</strong><br />IRL Activity Level: ", level_by_state_sb$ENTRIES)
       states_merged_sb <- level_by_state_sb
       map_legend_title <- "Level"
       
