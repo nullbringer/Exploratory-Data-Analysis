@@ -6,17 +6,16 @@ library(leaflet)
 library(maps)
 library(maptools)
 library(sp)
-
 library(shinycssloaders)
+
+dropdown_choices <- read.csv(file="data/dropdowns.csv", header=FALSE)$V1
 
 # read collected tweets from csv
 fluTweet <- read.csv(file="data/twitter_data.csv", header=TRUE, sep=",")
 
 # clean data: keep data with longitude and latitude value and remove duplicates
 fluTweet <- fluTweet[!(is.na(fluTweet$lat) | fluTweet$lat==""), ]
-
 fluTweet <- unique(fluTweet, by = "status_id")
-
 
 
 
@@ -75,21 +74,17 @@ ui <- fluidPage(
   
   sidebarLayout(
     sidebarPanel(
-      helpText("Select data from two dropdown to compare"),
+      helpText("Select data from two dropdown for comparison"),
       
       selectInput("var1", 
                   label = "Data Set 1:",
-                  choices = c("CDC Map" = "cdc",
-                              "Twitter Map" = "twt",
-                              "CDC vs Twitter MAp" = "cdctwt"),
-                  selected = "twt"),
+                  choices = dropdown_choices,
+                  selected = "CDS"),
       
       selectInput("var2", 
                   label = "Data Set 2:",
-                  choices = c("CDC Map" = "cdc",
-                              "Twitter Map" = "twt",
-                              "CDC vs Twitter MAp" = "cdctwt"),
-                  selected = "cdctwt")
+                  choices = dropdown_choices,
+                  selected = "Twitter : All Keywords")
       ),
     
     #mainPanel(plotOutput("map"))
