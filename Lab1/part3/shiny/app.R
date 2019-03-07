@@ -9,6 +9,7 @@ library(sp)
 library(shinycssloaders)
 library(stringr)
 library(tidyr)
+library(shinydashboard)
 
 ### Common Execution ###
 ########################
@@ -79,14 +80,14 @@ level_by_state_sb <- geo_join(states_import, level_by_state, "STUSPS", "state")
 level_by_state_sb <- subset(level_by_state_sb, !is.na(ENTRIES))
 
 
-
 ### CDS Ends ###
 
 
 
 
 # User interface ----
-header <- dashboardHeader(title = "Data Intensive Computing: Lab 1: Part3")
+header <- dashboardHeader(title = "Data Intensive Computing",
+                          titleWidth = 450)
 body <- dashboardBody(
   fluidRow(
     column(width = 9,
@@ -97,23 +98,40 @@ body <- dashboardBody(
     column(width = 3,
            box(width = NULL, status = "warning",
                uiOutput("routeSelect"),
+               p(
+                 paste("Select any dataset below to compare between them"
+                 )
+               ),
                selectInput("var1", 
                            label = "Data Set 1:",
                            choices = dropdown_choices,
-                           selected = "got a fever"),
+                           selected = "cds"),
                
                selectInput("var2", 
                            label = "Data Set 2:",
                            choices = dropdown_choices,
-                           selected = "has a fever"),
+                           selected = "twt")
+               
+           ),
+           box(width = NULL,title = "Lab Details", status = "primary", solidHeader = TRUE,
                p(
-                 paste("Note: a route number can have several different trips, each",
-                       "with a different path. Only the most commonly-used path will",
-                       "be displayed on the map."
+                  tags$b("Course:"), paste("CSE 587 Data Intensive Computing"),
+                  tags$br(),
+                  tags$b("Lab:"), paste("1 (Part 2, Part 3)"),
+                  tags$br(),
+                  tags$b("Instructor:"), paste("Bina Ramamurthy"),
+                  tags$br(),
+                  tags$b("Team:"), paste("Atrayee Nag, Amlan Gupta"),
+                  tags$br(), tags$br(),
+                  HTML(paste0("&copy;", " 2019"))
+                                          
+                                  
                  )
                )
+               
+               
            )
-    )
+    
   ),
   fluidRow(
     column(width = 9,
@@ -126,6 +144,7 @@ body <- dashboardBody(
 
 
 ui <- dashboardPage(
+  skin = "purple",
   header,
   dashboardSidebar(disable = TRUE),
   body
