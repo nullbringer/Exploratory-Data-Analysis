@@ -1,3 +1,4 @@
+library(shiny)
 library(tigris)
 library(plyr)
 library(dplyr)
@@ -5,16 +6,27 @@ library(leaflet)
 library(maps)
 library(maptools)
 library(sp)
-#library(data.table)
+library(shinycssloaders)
+library(stringr)
+### Common Execution ###
+########################
+
+# Downloading the shapefiles for states at the lowest resolution
+states_import <- states(cb=T)
+
+dropdown_choices <- read.csv(file="data/dropdowns.csv", header=FALSE)$V1
 
 # read collected tweets from csv
 fluTweet <- read.csv(file="data/twitter_data.csv", header=TRUE, sep=",")
 
 # clean data: keep data with longitude and latitude value and remove duplicates
 fluTweet <- fluTweet[!(is.na(fluTweet$lat) | fluTweet$lat==""), ]
-
 fluTweet <- unique(fluTweet, by = "status_id")
 
+# Get state list
+state_off <- data.frame(state.abb, state.name)
+colnames(state_off) <- c("state", "NAME")
+state_off$NAME <-tolower(state_off$NAME)
 
 
 
@@ -34,32 +46,18 @@ stateNames <- sapply(states_sp@polygons, function(x) x@ID)
 fluTweet$state <- stateNames[indices]
 fluTweet <- fluTweet[!(is.na(fluTweet$state) | fluTweet$state==""), ]
 
+####### End Common Execution ####
+
 count_by_state<- fluTweet %>% count(state)
 
 colnames(count_by_state) <- c("NAME", "TWEETS")
-
-state_off <- data.frame(state.abb, state.name)
-colnames(state_off) <- c("state", "NAME")
-state_off$NAME <-tolower(state_off$NAME)
 
 
 state_tweets <- left_join(count_by_state, state_off)
 
 
-# Downloading the shapefiles for states at the lowest resolution
-states <- states(cb=T)
 
-
-states %>% 
-  leaflet() %>% 
-  addTiles() %>% 
-  addPolygons(popup=~NAME)
-# Now we use the Tigris function geo_join to bring together 
-# the states shapefile and the sb_states dataframe -- STUSPS and state 
-# are the two columns they'll be joined by
-
-states_merged_sb <- geo_join(states, state_tweets, "STUSPS", "state")
-
+states_merged_sb <- geo_join(states_import, state_tweets, "STUSPS", "state")
 
 # Creating a color palette based on the number range in the total column
 pal <- colorNumeric("Greens", domain=states_merged_sb$TWEETS)
@@ -70,25 +68,20 @@ pal <- colorNumeric("Greens", domain=states_merged_sb$TWEETS)
 states_merged_sb <- subset(states_merged_sb, !is.na(TWEETS))
 
 # Setting up the pop up text
-popup_sb <- paste0("Total: ", as.character(states_merged_sb$TWEETS))
+#popup_sb <- paste0("Total: ", as.character(states_merged_sb$TWEETS))
 
-
-# Mapping it with the new tiles CartoDB.Positron
-leaflet() %>%
-  addProviderTiles("CartoDB.Positron") %>%
-  setView(-98.483330, 38.712046, zoom = 4) %>% 
-  addPolygons(data = states_merged_sb , 
-              fillColor = ~pal(states_merged_sb$TWEETS), 
-              fillOpacity = 0.7, 
-              weight = 0.2, 
-              smoothFactor = 0.2, 
-              popup = ~popup_sb) %>%
-  addLegend(pal = pal, 
-            values = states_merged_sb$TWEETS, 
-            position = "bottomright", 
-            title = "TWEETS")
+popup_sb <- paste0("<strong>", states_merged_sb$NAME, 
+                   "</strong><br />Tweets: ", states_merged_sb$TWEETS)
+                   
 
 
 
 
+fluTweet_filtered <- fluTweet %>% 
+  filter(str_detect(text, "fever"))
 
+
+kk <-CO2 %>%
+  filter(str_detect(Treatment, "non"))
+
+nrow(kk)
