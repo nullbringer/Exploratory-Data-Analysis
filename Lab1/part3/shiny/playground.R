@@ -8,6 +8,7 @@ library(maptools)
 library(sp)
 library(shinycssloaders)
 library(stringr)
+library(tidyr)
 ### Common Execution ###
 ########################
 
@@ -85,3 +86,56 @@ kk <-CO2 %>%
   filter(str_detect(Treatment, "non"))
 
 nrow(kk)
+
+###################
+
+
+
+
+## CDS Starts ###
+
+
+ili_activity_level = read.csv("data/cds.csv")
+act_lvl <- ili_activity_level[c(1,4,5,7)]
+
+act_lvl <-separate(data = act_lvl, col = ACTIVITY.LEVEL, into = c("leveltext", "levelvalue"), sep = " ")
+
+act_lvl$levelvalue <- as.numeric(act_lvl$levelvalue)
+
+level_by_state <- ddply(act_lvl, .(STATENAME), summarize,  Level=ceiling(mean(levelvalue)))
+names(level_by_state) <- c("NAME","LEVEL")
+
+level_by_state$NAME <- tolower(level_by_state$NAME)
+
+level_by_state <- left_join(level_by_state, state_off)
+
+level_by_state_sb <- geo_join(states_import, level_by_state, "STUSPS", "state")
+
+level_by_state_sb <- subset(level_by_state_sb, !is.na(LEVEL))
+
+
+
+### CDS Ends ###
+
+
+pal <- colorNumeric("Greens", domain=level_by_state_sb$LEVEL)
+popup_sb <- paste0("<strong>", level_by_state_sb$NAME, 
+                   "</strong><br />Tweets: ", level_by_state_sb$LEVEL)
+states_merged_sb <- level_by_state_sb
+
+
+
+leaflet() %>%
+  addProviderTiles("CartoDB.Positron") %>%
+  setView(-98.483330, 38.712046, zoom = 4) %>% 
+  addPolygons(data = states_merged_sb , 
+              fillColor = ~pal(states_merged_sb$LEVEL), 
+              fillOpacity = 0.7, 
+              weight = 0.2, 
+              smoothFactor = 0.2,
+              
+              popup = ~popup_sb) %>%
+  addLegend(pal = pal, 
+            values = states_merged_sb$LEVEL, 
+            position = "bottomright", 
+            title = "TWEETS")
