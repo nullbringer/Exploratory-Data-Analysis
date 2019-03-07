@@ -7,7 +7,6 @@ library(maps)
 library(maptools)
 library(sp)
 
-devtools::install_github('andrewsali/shinycssloaders')
 library(shinycssloaders)
 
 # read collected tweets from csv
@@ -76,18 +75,21 @@ ui <- fluidPage(
   
   sidebarLayout(
     sidebarPanel(
-      helpText("Select Heatmap from below list"),
+      helpText("Select data from two dropdown to compare"),
       
-      selectInput("var", 
-                  label = "Choose:",
+      selectInput("var1", 
+                  label = "Data Set 1:",
                   choices = c("CDC Map" = "cdc",
                               "Twitter Map" = "twt",
                               "CDC vs Twitter MAp" = "cdctwt"),
-                  selected = "Percent White"),
+                  selected = "twt"),
       
-      sliderInput("range", 
-                  label = "Range of interest:",
-                  min = 0, max = 100, value = c(0, 100))
+      selectInput("var2", 
+                  label = "Data Set 2:",
+                  choices = c("CDC Map" = "cdc",
+                              "Twitter Map" = "twt",
+                              "CDC vs Twitter MAp" = "cdctwt"),
+                  selected = "cdctwt")
       ),
     
     #mainPanel(plotOutput("map"))
