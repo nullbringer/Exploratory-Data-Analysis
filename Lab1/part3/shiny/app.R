@@ -7,6 +7,8 @@ library(maps)
 library(maptools)
 library(sp)
 
+devtools::install_github('andrewsali/shinycssloaders')
+library(shinycssloaders)
 
 # read collected tweets from csv
 fluTweet <- read.csv(file="data/twitter_data.csv", header=TRUE, sep=",")
@@ -62,7 +64,10 @@ pal <- colorNumeric("Greens", domain=states_merged_sb$TWEETS)
 states_merged_sb <- subset(states_merged_sb, !is.na(TWEETS))
 
 # Setting up the pop up text
-popup_sb <- paste0("Total: ", as.character(states_merged_sb$TWEETS))
+#popup_sb <- paste0("Total: ", as.character(states_merged_sb$TWEETS))
+
+popup_sb <- paste0("<strong>", states_merged_sb$NAME, 
+                   "</strong><br />Tweets: ", states_merged_sb$TWEETS)
 
 
 # User interface ----
@@ -87,7 +92,7 @@ ui <- fluidPage(
     
     #mainPanel(plotOutput("map"))
     mainPanel(
-      leafletOutput("mymap")
+      leafletOutput("mymap") %>% withSpinner(color="#0dc5c1", type = "7")
       )
     
   )
@@ -109,7 +114,8 @@ server <- function(input, output) {
                   fillColor = ~pal(states_merged_sb$TWEETS), 
                   fillOpacity = 0.7, 
                   weight = 0.2, 
-                  smoothFactor = 0.2, 
+                  smoothFactor = 0.2,
+                  
                   popup = ~popup_sb) %>%
       addLegend(pal = pal, 
                 values = states_merged_sb$TWEETS, 
