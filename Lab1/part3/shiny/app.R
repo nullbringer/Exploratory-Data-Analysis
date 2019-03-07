@@ -86,32 +86,50 @@ level_by_state_sb <- subset(level_by_state_sb, !is.na(ENTRIES))
 
 
 # User interface ----
-ui <- fluidPage(
-  titlePanel("Data Intensive Computing: Lab 1: Part3"),
-  
-  sidebarLayout(
-    sidebarPanel(
-      helpText("Select data from the dropdowns to compare!!"),
-      
-      selectInput("var1", 
-                  label = "Data Set 1:",
-                  choices = dropdown_choices,
-                  selected = "cds"),
-      
-      selectInput("var2", 
-                  label = "Data Set 2:",
-                  choices = dropdown_choices,
-                  selected = "twt")
-      ),
-    
-    #mainPanel(plotOutput("map"))
-    mainPanel(
-      leafletOutput("mymap1") %>% withSpinner(color="#0dc5c1", type = "7"),
-      leafletOutput("mymap2") %>% withSpinner(color="#0dc5c1", type = "7")
-      )
-    
+header <- dashboardHeader(title = "Data Intensive Computing: Lab 1: Part3")
+body <- dashboardBody(
+  fluidRow(
+    column(width = 9,
+           box(status = "primary", width = NULL, solidHeader = TRUE,
+               leafletOutput("mymap1") %>% withSpinner(color="#0dc5c1", type = "7")
+           )
+    ),
+    column(width = 3,
+           box(width = NULL, status = "warning",
+               uiOutput("routeSelect"),
+               selectInput("var1", 
+                           label = "Data Set 1:",
+                           choices = dropdown_choices,
+                           selected = "got a fever"),
+               
+               selectInput("var2", 
+                           label = "Data Set 2:",
+                           choices = dropdown_choices,
+                           selected = "has a fever"),
+               p(
+                 paste("Note: a route number can have several different trips, each",
+                       "with a different path. Only the most commonly-used path will",
+                       "be displayed on the map."
+                 )
+               )
+           )
+    )
+  ),
+  fluidRow(
+    column(width = 9,
+           box(width = NULL, solidHeader = TRUE,
+               leafletOutput("mymap2") %>% withSpinner(color="#0dc5c1", type = "7")
+           )
+    )
   )
-  )
+)
+
+
+ui <- dashboardPage(
+  header,
+  dashboardSidebar(disable = TRUE),
+  body
+)
 
 server <- function(input, output) {
 
