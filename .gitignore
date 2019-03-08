@@ -3,5 +3,10 @@
 **/*.ipynb_checkpoints/
 *.Amlans-Air
 *.local
+**/.Rproj.user
+**/*.RData
+**/*.Rhistory
+Lab1/part3/shiny/.RData
+Lab1/part3/shiny/.Rhistory
+Lab1/part3/shiny/.RData
 .Rproj.user
-Lab1/part3/Lab1Part3.ipynb
