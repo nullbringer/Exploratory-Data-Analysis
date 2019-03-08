@@ -117,7 +117,7 @@ body <- dashboardBody(
                p(
                   tags$b("Course:"), paste("CSE 587 Data Intensive Computing"),
                   tags$br(),
-                  tags$b("Lab:"), paste("1 (Part 2, Part 3)"),
+                  tags$b("Lab:"), paste("1 (Part 3)"),
                   tags$br(),
                   tags$b("Instructor:"), paste("Bina Ramamurthy"),
                   tags$br(),
