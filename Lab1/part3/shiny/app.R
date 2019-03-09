@@ -18,7 +18,7 @@ library(shinydashboard)
 states_import <- states(cb=T)
 
 
-dp_dw <- read.csv(file="data/dropdowns.csv", header=FALSE, sep=",")
+dp_dw <- read.csv(file="data/dropdowns.csv", header=FALSE, sep="\t")
 
 dropdown_choices <- setNames(as.list(dp_dw$V1), dp_dw$V2)
 
